@@ -1,5 +1,9 @@
 package io.dd.mr4;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
@@ -12,10 +16,6 @@ import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapper;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.Text;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AverageScoreJoinMapper extends TableMapper<ImmutableBytesWritable, Text> {
     private Table studentInfoTable;

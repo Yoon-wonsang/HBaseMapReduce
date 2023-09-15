@@ -9,12 +9,12 @@ import org.apache.hadoop.io.Text;
 import java.io.IOException;
 import java.util.logging.Logger; // Logger를 추가
 
-public class AverageScoreReducer extends TableReducer<Text, Text, ImmutableBytesWritable> {
+public class AverageScoreReducer extends TableReducer<ImmutableBytesWritable, Text, ImmutableBytesWritable> {
     // Logger 인스턴스 생성
     private static final Logger logger = Logger.getLogger(AverageScoreReducer.class.getName());
 
     @Override
-    protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(ImmutableBytesWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         // 평균을 계산하기 위한 변수 초기화
         float midtermSum = 0;
         float finalSum = 0;
@@ -39,14 +39,14 @@ public class AverageScoreReducer extends TableReducer<Text, Text, ImmutableBytes
             float finalAverage = (float) finalSum / count;
 
             // HBase에 결과를 저장하기 위한 Put 객체 생성
-            Put put = new Put(key.getBytes());
+            Put put = new Put(key.get());
 
             // 결과 값을 HBase의 컬럼으로 설정합니다.
             put.addColumn(Bytes.toBytes("averages"), Bytes.toBytes("midterm"), Bytes.toBytes(Float.toString(midtermAverage)));
             put.addColumn(Bytes.toBytes("averages"), Bytes.toBytes("final"), Bytes.toBytes(Float.toString(finalAverage)));
 
             // 결과를 HBase에 저장합니다.
-            context.write(new ImmutableBytesWritable(key.getBytes()), put);
+            context.write(new ImmutableBytesWritable(key.get()), put);
         }
     }
 }

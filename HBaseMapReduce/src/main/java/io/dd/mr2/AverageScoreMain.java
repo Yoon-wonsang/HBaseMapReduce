@@ -5,6 +5,7 @@ import java.security.PrivilegedAction;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -30,7 +31,7 @@ public class AverageScoreMain {
 					TableMapReduceUtil.initTableMapperJob("exam_scores", // 입력 HBase 테이블 이름
 							new Scan(), // 입력 데이터 스캔 설정 (전체 스캔)
 							AverageScoreMapper.class, // Mapper 클래스
-							Text.class, // Mapper의 출력 키 타입
+							ImmutableBytesWritable.class, // Mapper의 출력 키 타입
 							Text.class, // Mapper의 출력 값 타입
 							job, false);
 

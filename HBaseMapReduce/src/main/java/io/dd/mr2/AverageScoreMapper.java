@@ -8,12 +8,14 @@ import org.apache.hadoop.io.Text;
 
 import java.io.IOException;
 
-public class AverageScoreMapper extends TableMapper<Text, Text> {
+public class AverageScoreMapper extends TableMapper<ImmutableBytesWritable, Text> {
+	private Text outValue = new Text();
+	
     @Override
     protected void map(ImmutableBytesWritable key, Result value, Context context)
             throws IOException, InterruptedException {
         // 키로 학생 ID를 가져옵니다.
-        String studentId = new String(key.get());
+    	String studentId = Bytes.toString(key.get());
 
         // 각 과목의 중간고사와 기말고사 점수를 가져옵니다.
         int chemistryMid = getScore(value, "chemistry", "mid");
@@ -34,9 +36,12 @@ public class AverageScoreMapper extends TableMapper<Text, Text> {
         // 중간 점수와 기말 점수의 평균을 계산합니다.
         float midtermAverage = (chemistryMid + englishMid + historyMid + mathMid + scienceMid) / 5.0f;
         float finalAverage = (chemistryFinal + englishFinal + historyFinal + mathFinal + scienceFinal) / 5.0f;
+        
+        String outputValue = midtermAverage + "\t" + finalAverage;
 
         // 결과를 출력합니다. 학생 ID를 Row Key로 사용하고, 평균 점수를 Text로 출력합니다.
-        context.write(new Text(studentId), new Text(midtermAverage + "\t" + finalAverage));
+        outValue.set(outputValue);
+        context.write(key, outValue);
     }
 
     // 열 값을 가져오고 int로 변환하는 도우미 메서드
